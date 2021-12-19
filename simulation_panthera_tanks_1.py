@@ -37,8 +37,8 @@ Panthera = Rocket(
     inertiaZ = 0.0351, # arbitrary number
     distanceRocketNozzle = -1.255, # arbitrary number
     distanceRocketPropellant = -0.085704, # arbitraty number
-    powerOffDrag = 10, #arbitrary number
-    powerOnDrag = 10, #arbitrary number
+    powerOffDrag = 0.5, #arbitrary number
+    powerOnDrag = 0.5, #arbitrary number
 )
 
 Panthera.setRailButtons([0.2,-0.5])

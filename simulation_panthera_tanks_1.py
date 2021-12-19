@@ -21,9 +21,9 @@ WhiteGiant = SolidMotor(
     grainDensity = (3.5*975.2 + 788.75)/4.5, # mass ratio was used to calculate the grain density average)
     grainOuterRadius = 0.3, # Not sure what White Giant's Outer Radius is (only have CAD for white dwarf), calculated to ensure propellant mass is 150kg
     grainInitialInnerRadius = 0,
-    grainInitialHeight = 0.626, # Not sure what White Giant's Initial Height is either (paired with radius to ensure propellant mass is 150kg using ullage volume)
-    nozzleRadius = 33/1000, # Not sure about this either
-    throatRadius = 11/1000, # not sure about this either
+    grainInitialHeight = 0.284, # Not sure what White Giant's Initial Height is either (paired with radius to ensure propellant mass is 150kg using ullage volume)
+    nozzleRadius = 200/1000, # Not sure about this either
+    throatRadius = 100/1000, # not sure about this either
     interpolationMethod = "linear"
 )
 
@@ -32,7 +32,7 @@ WhiteGiant.info()
 Panthera = Rocket(
     motor = WhiteGiant,
     radius = 0.3, # increase a bit off the tank radius
-    mass = 60, # I included the wet mass of Aquila in this
+    mass = 100, # I included the wet mass of Aquila in this
     inertiaI = 6.60, # arbitrary number
     inertiaZ = 0.0351, # arbitrary number
     distanceRocketNozzle = -3.8, # arbitrary number

@@ -17,9 +17,9 @@ WhiteGiant = SolidMotor(
     thrustSource= 10000,
     burnOut = 30,
     grainNumber = 2,
-    grainSeparation = 0,
+    grainSeparation = 0.2,
     grainDensity = (3.5*975.2 + 788.75)/4.5, # mass ratio was used to calculate the grain density average)
-    grainOuterRadius = 0.03, # Not sure what White Giant's Outer Radius is (only have CAD for white dwarf), calculated to ensure propellant mass is 150kg
+    grainOuterRadius = 0.3, # Not sure what White Giant's Outer Radius is (only have CAD for white dwarf), calculated to ensure propellant mass is 150kg
     grainInitialInnerRadius = 0,
     grainInitialHeight = 0.626, # Not sure what White Giant's Initial Height is either (paired with radius to ensure propellant mass is 150kg using ullage volume)
     nozzleRadius = 33/1000, # Not sure about this either
@@ -31,11 +31,11 @@ WhiteGiant.info()
 
 Panthera = Rocket(
     motor = WhiteGiant,
-    radius = 0.05, # increase a bit off the tank radius
+    radius = 0.3, # increase a bit off the tank radius
     mass = 60, # I included the wet mass of Aquila in this
     inertiaI = 6.60, # arbitrary number
     inertiaZ = 0.0351, # arbitrary number
-    distanceRocketNozzle = -1.255, # arbitrary number
+    distanceRocketNozzle = -3.8, # arbitrary number
     distanceRocketPropellant = -0.085704, # arbitraty number
     powerOffDrag = 0.5, 
     powerOnDrag = 0.5, 
@@ -44,11 +44,11 @@ Panthera = Rocket(
 Panthera.setRailButtons([0.2,-0.5])
 
 #arbitrary aeros surfaces
-NoseCone = Panthera.addNose(length=0.55829, kind="vonKarman", distanceToCM=0.71971)
+NoseCone = Panthera.addNose(length=0.40, kind="vonKarman", distanceToCM=3.8)
 
-FinSet = Panthera.addFins(4, span=0.100, rootChord=0.120, tipChord=0.040, distanceToCM=-1.04956)
+FinSet = Panthera.addFins(4, span=0.325, rootChord=0.4, tipChord=0.2, distanceToCM=-1.400)
 
-Tail = Panthera.addTail(topRadius=0.0635, bottomRadius=0.0435, length=0.060, distanceToCM=-1.194656)
+Tail = Panthera.addTail(topRadius=0.15 , bottomRadius =0.65 ,length=1, distanceToCM=-3.8)
 
 def drogueTrigger(p, y):
     # p = pressure

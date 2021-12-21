@@ -27,8 +27,6 @@ WhiteGiant = SolidMotor(
     interpolationMethod = "linear"
 )
 
-
-
 WhiteGiant.info()
 
 Panthera = Rocket(
@@ -64,21 +62,19 @@ def mainTrigger(p, y):
     # activate main when vz < 0 m/s and z < 800 m.
     return True if y[5] < 0 and y[2] < 800 else False
 
-Main = Aquila.addParachute('Main',
-                            CdS=10.0,
-                            trigger=mainTrigger,
-                            samplingRate=105,
-                            lag=1.5,
-                            noise=(0, 8.3, 0.5))
+# Main = Panthera.addParachute('Main',
+#                             CdS=10.0,
+#                             trigger=mainTrigger,
+#                             samplingRate=105,
+#                             lag=1.5,
+#                             noise=(0, 8.3, 0.5))
 
-Drogue = Aquila.addParachute('Drogue',
-                              CdS=1.0,
-                              trigger=drogueTrigger,
-                              samplingRate=105,
-                              lag=1.5,
-                              noise=(0, 8.3, 0.5))
+# Drogue = Panthera.addParachute('Drogue',
+#                               CdS=1.0,
+#                               trigger=drogueTrigger,
+#                               samplingRate=105,
+#                               lag=1.5,
+#                               noise=(0, 8.3, 0.5))
 
 TestFlight = Flight(rocket=Panthera, environment=Env, inclination=85, heading=0)
-
-TestFlight2 = Flight(rocket=Aquila, initialSolution=TestFlight, environment=Env,inclindation =85, heading = 0 )
 TestFlight.allInfo()

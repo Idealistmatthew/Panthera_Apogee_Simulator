@@ -64,14 +64,14 @@ def mainTrigger(p, y):
     # activate main when vz < 0 m/s and z < 800 m.
     return True if y[5] < 0 and y[2] < 800 else False
 
-Main = Panthera.addParachute('Main',
+Main = Aquila.addParachute('Main',
                             CdS=10.0,
                             trigger=mainTrigger,
                             samplingRate=105,
                             lag=1.5,
                             noise=(0, 8.3, 0.5))
 
-Drogue = Panthera.addParachute('Drogue',
+Drogue = Aquila.addParachute('Drogue',
                               CdS=1.0,
                               trigger=drogueTrigger,
                               samplingRate=105,

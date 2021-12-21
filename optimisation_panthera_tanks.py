@@ -101,4 +101,8 @@ def apogee_fromvariedtankMass(propellantmass):
     TestFlight = Flight(rocket=Panthera, environment=Env, inclination=85, heading=0)
     return TestFlight.apogee
 
+# import time
+# start = time.time()
 print(apogee_fromvariedtankMass(155))
+# end = time.time()
+# print(f"Runtime of the program is {end-start}")

@@ -7,10 +7,10 @@ Env = Environment(
     elevation=1400
 )
 
-import datetime
-tomorrow = datetime.date.today() + datetime.timedelta(days=1)
-Env.setDate((tomorrow.year, tomorrow.month, tomorrow.day, 12))
-Env.setAtmosphericModel(type='Forecast', file='GFS')
+# import datetime
+# tomorrow = datetime.date.today() + datetime.timedelta(days=1)
+# Env.setDate((tomorrow.year, tomorrow.month, tomorrow.day, 12))
+# Env.setAtmosphericModel(type='Forecast', file='GFS')
 Env.info()
 
 WhiteGiant = SolidMotor(
@@ -76,5 +76,5 @@ def mainTrigger(p, y):
 #                               lag=1.5,
 #                               noise=(0, 8.3, 0.5))
 
-TestFlight = Flight(rocket=Panthera, environment=Env, inclination=85, heading=0)
+TestFlight = Flight(rocket=Panthera, environment=Env, inclination=85, heading=0, terminateOnApogee= True)
 TestFlight.allInfo()

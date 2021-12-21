@@ -1,7 +1,7 @@
 from rocketpy import Environment, SolidMotor, Rocket, Flight
 # Setting up the environment
 Env = Environment(
-    railLength=5.2,
+    railLength=18,
     latitude=32.990254,
     longitude=-106.974998,
     elevation=1400
@@ -43,7 +43,7 @@ Panthera = Rocket(
     powerOnDrag = 0.5, 
 )
 
-Panthera.setRailButtons([0.2,-0.5])
+Panthera.setRailButtons([0,18])
 
 #arbitrary aeros surfaces
 NoseCone = Panthera.addNose(length=0.40, kind="vonKarman", distanceToCM=3.8)

@@ -1,7 +1,7 @@
 from rocketpy import Environment, SolidMotor, Rocket, Flight
 # Setting up the environment
 Env = Environment(
-    railLength=5.2,
+    railLength=18,
     latitude=32.990254,
     longitude=-106.974998,
     elevation=1400
@@ -41,7 +41,7 @@ Panthera = Rocket(
     powerOnDrag = 0.5, 
 )
 
-Panthera.setRailButtons([0.2,-0.5])
+Panthera.setRailButtons([0,18])
 
 #arbitrary aeros surfaces
 NoseCone = Panthera.addNose(length=0.40, kind="vonKarman", distanceToCM=3.8)
@@ -62,19 +62,19 @@ def mainTrigger(p, y):
     # activate main when vz < 0 m/s and z < 800 m.
     return True if y[5] < 0 and y[2] < 800 else False
 
-Main = Panthera.addParachute('Main',
-                            CdS=10.0,
-                            trigger=mainTrigger,
-                            samplingRate=105,
-                            lag=1.5,
-                            noise=(0, 8.3, 0.5))
+# Main = Panthera.addParachute('Main',
+#                             CdS=10.0,
+#                             trigger=mainTrigger,
+#                             samplingRate=105,
+#                             lag=1.5,
+#                             noise=(0, 8.3, 0.5))
 
-Drogue = Panthera.addParachute('Drogue',
-                              CdS=1.0,
-                              trigger=drogueTrigger,
-                              samplingRate=105,
-                              lag=1.5,
-                              noise=(0, 8.3, 0.5))
+# Drogue = Panthera.addParachute('Drogue',
+#                               CdS=1.0,
+#                               trigger=drogueTrigger,
+#                               samplingRate=105,
+#                               lag=1.5,
+#                               noise=(0, 8.3, 0.5))
 
 TestFlight = Flight(rocket=Panthera, environment=Env, inclination=85, heading=0)
 TestFlight.allInfo()

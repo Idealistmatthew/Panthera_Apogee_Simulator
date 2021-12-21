@@ -28,8 +28,16 @@ WhiteGiant = SolidMotor(
 )
 
 
-
-WhiteGiant.info()
+N5800 = SolidMotor(
+    thrustSource= r"C:\Users\tsuna\CUSF\Cesaroni_20146N5800-P.eng",
+    burnOut = 3.49,
+    grainNumber = 2,
+    grainDensity = 1950, # with APCP as solid propellant, density found at https://www.atsdr.cdc.gov/toxprofiles/tp162-c4.pdf
+    grainOuterRadius=0.065,
+    grainInitialInnerRadius=0,
+    grainInitialHeight= 0.174 #using grain density, outer radius, and a propellant mass of 9kg from http://www.pro38.com/products/pro98/motor/MotorData.php?prodid=20146N5800-P
+    #Nozzle dimensions are assumed to be default
+)
 
 Panthera = Rocket(
     motor = WhiteGiant,
@@ -43,6 +51,18 @@ Panthera = Rocket(
     powerOnDrag = 0.5, 
 )
 
+Aquila = Rocket(
+    motor = N5800,
+    radius = 0.065,
+    mass = 50,
+    nertiaI = 6.60, # arbitrary number
+    inertiaZ = 0.0351, # arbitrary number
+    distanceRocketNozzle = -3.8, # arbitrary number
+    distanceRocketPropellant = -0.085704, # arbitraty number
+    powerOffDrag = 0.5, 
+    powerOnDrag = 0.5
+)
+
 Panthera.setRailButtons([0,18])
 
 #arbitrary aeros surfaces
@@ -52,31 +72,31 @@ FinSet = Panthera.addFins(4, span=0.325, rootChord=0.4, tipChord=0.2, distanceTo
 
 Tail = Panthera.addTail(topRadius=0.15 , bottomRadius =0.65 ,length=1, distanceToCM=-3.8)
 
-def drogueTrigger(p, y):
-    # p = pressure
-    # y = [x, y, z, vx, vy, vz, e0, e1, e2, e3, w1, w2, w3]
-    # activate drogue when vz < 0 m/s.
-    return True if y[5] < 0 else False
+# def drogueTrigger(p, y):
+#     # p = pressure
+#     # y = [x, y, z, vx, vy, vz, e0, e1, e2, e3, w1, w2, w3]
+#     # activate drogue when vz < 0 m/s.
+#     return True if y[5] < 0 else False
 
-def mainTrigger(p, y):
-    # p = pressure
-    # y = [x, y, z, vx, vy, vz, e0, e1, e2, e3, w1, w2, w3]
-    # activate main when vz < 0 m/s and z < 800 m.
-    return True if y[5] < 0 and y[2] < 800 else False
+# def mainTrigger(p, y):
+#     # p = pressure
+#     # y = [x, y, z, vx, vy, vz, e0, e1, e2, e3, w1, w2, w3]
+#     # activate main when vz < 0 m/s and z < 800 m.
+#     return True if y[5] < 0 and y[2] < 800 else False
 
-Main = Aquila.addParachute('Main',
-                            CdS=10.0,
-                            trigger=mainTrigger,
-                            samplingRate=105,
-                            lag=1.5,
-                            noise=(0, 8.3, 0.5))
+# Main = Aquila.addParachute('Main',
+#                             CdS=10.0,
+#                             trigger=mainTrigger,
+#                             samplingRate=105,
+#                             lag=1.5,
+#                             noise=(0, 8.3, 0.5))
 
-Drogue = Aquila.addParachute('Drogue',
-                              CdS=1.0,
-                              trigger=drogueTrigger,
-                              samplingRate=105,
-                              lag=1.5,
-                              noise=(0, 8.3, 0.5))
+# Drogue = Aquila.addParachute('Drogue',
+#                               CdS=1.0,
+#                               trigger=drogueTrigger,
+#                               samplingRate=105,
+#                               lag=1.5,
+#                               noise=(0, 8.3, 0.5))
 
 TestFlight = Flight(rocket=Panthera, environment=Env, inclination=85, heading=0, terminateOnApogee = True)
 

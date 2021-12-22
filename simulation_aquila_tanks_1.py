@@ -55,7 +55,7 @@ Aquila = Rocket(
     motor = N5800,
     radius = 0.065,
     mass = 50,
-    nertiaI = 6.60, # arbitrary number
+    inertiaI = 6.60, # arbitrary number
     inertiaZ = 0.0351, # arbitrary number
     distanceRocketNozzle = -3.8, # arbitrary number
     distanceRocketPropellant = -0.085704, # arbitraty number
@@ -99,6 +99,7 @@ Tail = Panthera.addTail(topRadius=0.15 , bottomRadius =0.65 ,length=1, distanceT
 #                               noise=(0, 8.3, 0.5))
 
 TestFlight = Flight(rocket=Panthera, environment=Env, inclination=85, heading=0, terminateOnApogee = True)
+testSolution = TestFlight.solution[-1] #The initial solution for stage 2 is the final position and velocity data obtained from numerical integration in stage 1 simulation
 
-TestFlight2 = Flight(rocket=Aquila, initialSolution=TestFlight, environment=Env,inclindation =85, heading = 0 )
-TestFlight.allInfo()
+TestFlight2 = Flight(rocket=Aquila, initialSolution=testSolution, environment=Env,inclination =85, heading = 0)
+TestFlight2.info() 

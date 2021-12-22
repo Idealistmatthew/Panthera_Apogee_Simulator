@@ -7,11 +7,11 @@ Env = Environment(
     elevation=1400
 )
 
-import datetime
-tomorrow = datetime.date.today() + datetime.timedelta(days=1)
-Env.setDate((tomorrow.year, tomorrow.month, tomorrow.day, 12))
-Env.setAtmosphericModel(type='Forecast', file='GFS')
-Env.info()
+# import datetime
+# tomorrow = datetime.date.today() + datetime.timedelta(days=1)
+# Env.setDate((tomorrow.year, tomorrow.month, tomorrow.day, 12))
+# Env.setAtmosphericModel(type='Forecast', file='GFS')
+# Env.info()
 
 WhiteGiant = SolidMotor(
     thrustSource= 10000,
@@ -29,7 +29,7 @@ WhiteGiant = SolidMotor(
 
 
 N5800 = SolidMotor(
-    thrustSource= r"C:\Users\tsuna\CUSF\Cesaroni_20146N5800-P.eng",
+    thrustSource= r".\Motors\Cesaroni_20146N5800-P.eng",
     burnOut = 3.49,
     grainNumber = 2,
     grainDensity = 1950, # with APCP as solid propellant, density found at https://www.atsdr.cdc.gov/toxprofiles/tp162-c4.pdf
@@ -64,6 +64,7 @@ Aquila = Rocket(
 )
 
 Panthera.setRailButtons([0,18])
+Aquila.setRailButtons([0,0.1])
 
 #arbitrary aeros surfaces
 NoseCone = Panthera.addNose(length=0.40, kind="vonKarman", distanceToCM=3.8)
@@ -100,6 +101,26 @@ Tail = Panthera.addTail(topRadius=0.15 , bottomRadius =0.65 ,length=1, distanceT
 
 TestFlight = Flight(rocket=Panthera, environment=Env, inclination=85, heading=0, terminateOnApogee = True)
 testSolution = TestFlight.solution[-1] #The initial solution for stage 2 is the final position and velocity data obtained from numerical integration in stage 1 simulation
+print(testSolution)
 
-TestFlight2 = Flight(rocket=Aquila, initialSolution=testSolution, environment=Env,inclination =85, heading = 0)
-TestFlight2.info() 
+# Env2 = Environment(
+#     railLength=1,
+#     latitude=32.990254,
+#     longitude=-106.974998,
+#     elevation=1400 + TestFlight.apogee
+# )
+
+
+TestFlight2 = Flight(rocket=Aquila,
+ initialSolution=testSolution,
+  environment=Env,
+  inclination =90,
+   heading = 0, 
+# there's an issue for the terminate on Apogee feature here
+# terminateOnApogee= True
+)
+# rocket is flying sideways sadly
+print(TestFlight2.MachNumber)
+TestFlight2.plot3dTrajectory()
+# print(TestFlight2.solution)
+#print(TestFlight2.solution[-1])

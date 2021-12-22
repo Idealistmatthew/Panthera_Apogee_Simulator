@@ -76,5 +76,5 @@ def mainTrigger(p, y):
 #                               lag=1.5,
 #                               noise=(0, 8.3, 0.5))
 
-TestFlight = Flight(rocket=Panthera, environment=Env, inclination=85, heading=0, terminateOnApogee= True)
+TestFlight = Flight(rocket=Panthera, environment=Env, inclination=90, heading=0, terminateOnApogee= True)
 TestFlight.allInfo()

@@ -64,7 +64,7 @@ Aquila = Rocket(
 )
 
 Panthera.setRailButtons([0,18])
-Aquila.setRailButtons([0,0.1])
+Aquila.setRailButtons([0,0.20])
 
 #arbitrary aeros surfaces
 NoseCone = Panthera.addNose(length=0.40, kind="vonKarman", distanceToCM=3.8)
@@ -99,7 +99,7 @@ Tail = Panthera.addTail(topRadius=0.15 , bottomRadius =0.65 ,length=1, distanceT
 #                               lag=1.5,
 #                               noise=(0, 8.3, 0.5))
 
-TestFlight = Flight(rocket=Panthera, environment=Env, inclination=85, heading=0, terminateOnApogee = True)
+TestFlight = Flight(rocket=Panthera, environment=Env, inclination=90, heading=0, maxTime = 30)
 testSolution = TestFlight.solution[-1] #The initial solution for stage 2 is the final position and velocity data obtained from numerical integration in stage 1 simulation
 print(testSolution)
 
@@ -109,18 +109,24 @@ print(testSolution)
 #     longitude=-106.974998,
 #     elevation=1400 + TestFlight.apogee
 # )
-
+# TestFlight.plot3dTrajectory()
+# print(TestFlight.MachNumber)
 
 TestFlight2 = Flight(rocket=Aquila,
- initialSolution=testSolution,
-  environment=Env,
+  initialSolution = testSolution,
+  environment= Env,
   inclination =90,
-   heading = 0, 
+  heading = 0, 
 # there's an issue for the terminate on Apogee feature here
-# terminateOnApogee= True
+terminateOnApogee= True
 )
-# rocket is flying sideways sadly
-print(TestFlight2.MachNumber)
-TestFlight2.plot3dTrajectory()
+
+# 10623.3429350963
+
+print(TestFlight2.solution[-1])
+TestFlight2.allInfo()
+# print(TestFlight2.apogee)
+# # rocket is flying sideways sadly
+# TestFlight2.plot3dTrajectory()
 # print(TestFlight2.solution)
 #print(TestFlight2.solution[-1])

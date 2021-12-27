@@ -1,6 +1,8 @@
+from numpy.core.function_base import linspace
 from rocketpy import Environment, SolidMotor, Rocket, Flight
 import numpy as np
 from scipy import optimize
+import matplotlib.pyplot as plt
 # Setting up the environment
 Env = Environment(
     railLength=18,
@@ -35,10 +37,11 @@ def apogee_fromvariedtankMass(propellantmass):
     grainvolume = grainmass/density
     grainradius = 0.3
     grainheight = float(grainvolume/(np.pi*(grainradius**2)))
+    burnOuttime = float(propellantmass/150*30)
 
     WhiteGiant = SolidMotor(
         thrustSource= 10000,
-        burnOut = 30,
+        burnOut = burnOuttime,
         grainNumber = 2,
         grainSeparation = 0.2,
         grainDensity = (3.5*975.2 + 788.75)/4.5, # mass ratio was used to calculate the grain density average)
@@ -102,9 +105,22 @@ def apogee_fromvariedtankMass(propellantmass):
     TestFlight = Flight(rocket=Panthera, environment=Env, inclination=90, heading=0)
     return -TestFlight.apogee
 
+mass = np.linspace(60,500,num = 100)
+apogee_list = []
+for i in mass:
+    apogee_list.append(-apogee_fromvariedtankMass(i))
 
-res = optimize.minimize(apogee_fromvariedtankMass, 150)
-print(res.x)
+plt.plot(mass, apogee_list)
+plt.xlabel("Propellant Mass (kg)")
+plt.ylabel("Apogee (m)")
+plt.show()
+
+
+
+
+
+# res = optimize.minimize(apogee_fromvariedtankMass, 150)
+# print(res.x)
 # import time
 # start = time.time()
 # print(apogee_fromvariedtankMass(155))

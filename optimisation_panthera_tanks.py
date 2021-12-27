@@ -31,7 +31,7 @@ def apogee_fromvariedtankMass(propellantmass):
     -------
 
     """
-    ## some lines of code to calculate the grain height
+    ## some lines of code to calculate the grain height and other properties that change with propellant mass
     grainmass = propellantmass/2
     density = (3.5*975.2 + 788.75)/4.5
     grainvolume = grainmass/density

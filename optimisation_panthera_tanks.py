@@ -58,7 +58,7 @@ def apogee_fromvariedtankMass(propellantmass):
     Panthera = Rocket(
         motor = WhiteGiant,
         radius = 0.3, # increase a bit off the tank radius
-        mass = 100, # I included the wet mass of Aquila in this
+        mass = 100, # I included the wet mass of Aquila in this (meant to be total dry mass of rocket)
         inertiaI = 6.60, # arbitrary number
         inertiaZ = 0.0351, # arbitrary number
         distanceRocketNozzle = -3.8, # arbitrary number

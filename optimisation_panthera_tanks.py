@@ -38,6 +38,7 @@ def apogee_fromvariedtankMass(propellantmass):
     grainradius = 0.3
     grainheight = float(grainvolume/(np.pi*(grainradius**2)))
     burnOuttime = float(propellantmass/150*30)
+    drymass = float(50 + 50*(propellantmass/150))
 
     WhiteGiant = SolidMotor(
         thrustSource= 10000,
@@ -58,7 +59,7 @@ def apogee_fromvariedtankMass(propellantmass):
     Panthera = Rocket(
         motor = WhiteGiant,
         radius = 0.3, # increase a bit off the tank radius
-        mass = 100, # I included the wet mass of Aquila in this (meant to be total dry mass of rocket)
+        mass = drymass, # I included the wet mass of Aquila in this (meant to be total dry mass of rocket)
         inertiaI = 6.60, # arbitrary number
         inertiaZ = 0.0351, # arbitrary number
         distanceRocketNozzle = -3.8, # arbitrary number
@@ -105,7 +106,7 @@ def apogee_fromvariedtankMass(propellantmass):
     TestFlight = Flight(rocket=Panthera, environment=Env, inclination=90, heading=0)
     return -TestFlight.apogee
 
-mass = np.linspace(60,500,num = 100)
+mass = np.linspace(60,200,num = 100)
 apogee_list = []
 for i in mass:
     apogee_list.append(-apogee_fromvariedtankMass(i))

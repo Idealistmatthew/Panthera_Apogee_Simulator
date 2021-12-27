@@ -35,7 +35,7 @@ def apogee_fromvariedtankMass(propellantmass):
     grainmass = propellantmass/2
     density = (3.5*975.2 + 788.75)/4.5
     grainvolume = grainmass/density
-    grainradius = 0.3
+    grainradius = 0.15
     grainheight = float(grainvolume/(np.pi*(grainradius**2)))
     burnOuttime = float(propellantmass/150*30)
     drymass = float(50 + 50*(propellantmass/150))
@@ -46,7 +46,7 @@ def apogee_fromvariedtankMass(propellantmass):
         grainNumber = 2,
         grainSeparation = 0.2,
         grainDensity = (3.5*975.2 + 788.75)/4.5, # mass ratio was used to calculate the grain density average)
-        grainOuterRadius = 0.3, # Not sure what White Giant's Outer Radius is (only have CAD for white dwarf), calculated to ensure propellant mass is 150kg
+        grainOuterRadius = 0.15, # Not sure what White Giant's Outer Radius is (only have CAD for white dwarf), calculated to ensure propellant mass is 150kg
         grainInitialInnerRadius = 0,
         grainInitialHeight = grainheight, # Not sure what White Giant's Initial Height is either (paired with radius to ensure propellant mass is 150kg using ullage volume)
         nozzleRadius = 200/1000, # Not sure about this either

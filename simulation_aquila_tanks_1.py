@@ -19,23 +19,23 @@ WhiteGiant = SolidMotor(
     grainNumber = 2,
     grainSeparation = 0.2,
     grainDensity = (3.5*975.2 + 788.75)/4.5, # mass ratio was used to calculate the grain density average)
-    grainOuterRadius = 0.3, # Not sure what White Giant's Outer Radius is (only have CAD for white dwarf), calculated to ensure propellant mass is 150kg
+    grainOuterRadius = 0.15, # Not sure what White Giant's Outer Radius is (only have CAD for white dwarf), calculated to ensure propellant mass is 150kg
     grainInitialInnerRadius = 0,
-    grainInitialHeight = 0.284, # Not sure what White Giant's Initial Height is either (paired with radius to ensure propellant mass is 150kg using ullage volume)
+    grainInitialHeight = 1.136, # Not sure what White Giant's Initial Height is either (paired with radius to ensure propellant mass is 150kg using ullage volume)
     nozzleRadius = 200/1000, # Not sure about this either
     throatRadius = 100/1000, # not sure about this either
     interpolationMethod = "linear"
 )
 
 
-N5800 = SolidMotor(
-    thrustSource= r".\Motors\Cesaroni_20146N5800-P.eng",
+N3400 = SolidMotor(
+    thrustSource= 3403.1, # used average Thrust
     burnOut = 3.49,
     grainNumber = 2,
-    grainDensity = 1950, # with APCP as solid propellant, density found at https://www.atsdr.cdc.gov/toxprofiles/tp162-c4.pdf
+    grainDensity = 1950, # with APCP as solid propellant, density found at h35ttps://www.atsdr.cdc.gov/toxprofiles/tp162-c4.pdf
     grainOuterRadius=0.065,
     grainInitialInnerRadius=0,
-    grainInitialHeight= 0.174 #using grain density, outer radius, and a propellant mass of 9kg from http://www.pro38.com/products/pro98/motor/MotorData.php?prodid=20146N5800-P
+    grainInitialHeight= 0.31998 #using grain density, outer radius, and a propellant mass of 9kg from http://www.pro38.com/products/pro98/motor/MotorData.php?prodid=20146N5800-P
     #Nozzle dimensions are assumed to be default
 )
 
@@ -52,13 +52,13 @@ Panthera = Rocket(
 )
 
 Aquila = Rocket(
-    motor = N5800,
+    motor = N3400,
     radius = 0.065,
-    mass = 50,
+    mass = 26,
     inertiaI = 6.60, # arbitrary number
     inertiaZ = 0.0351, # arbitrary number
     distanceRocketNozzle = -3.8, # arbitrary number
-    distanceRocketPropellant = -0.085704, # arbitraty number
+    distanceRocketPropellant = -0.85704, # arbitraty number
     powerOffDrag = 0.5, 
     powerOnDrag = 0.5
 )
@@ -123,9 +123,9 @@ terminateOnApogee= True
 
 # 10623.3429350963
 
-print(TestFlight2.solution[-1])
-TestFlight2.allInfo()
-# print(TestFlight2.apogee)
+# print(TestFlight2.solution[-1])
+# TestFlight2.allInfo()
+print(TestFlight2.apogee)
 # # rocket is flying sideways sadly
 # TestFlight2.plot3dTrajectory()
 # print(TestFlight2.solution)

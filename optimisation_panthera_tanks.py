@@ -1,5 +1,6 @@
 from rocketpy import Environment, SolidMotor, Rocket, Flight
 import numpy as np
+from scipy import optimize
 # Setting up the environment
 Env = Environment(
     railLength=18,
@@ -33,7 +34,7 @@ def apogee_fromvariedtankMass(propellantmass):
     density = (3.5*975.2 + 788.75)/4.5
     grainvolume = grainmass/density
     grainradius = 0.3
-    grainheight = grainvolume/(np.pi*(grainradius**2))
+    grainheight = float(grainvolume/(np.pi*(grainradius**2)))
 
     WhiteGiant = SolidMotor(
         thrustSource= 10000,
@@ -98,11 +99,14 @@ def apogee_fromvariedtankMass(propellantmass):
     #                               lag=1.5,
     #                               noise=(0, 8.3, 0.5))
 
-    TestFlight = Flight(rocket=Panthera, environment=Env, inclination=85, heading=0)
-    return TestFlight.apogee
+    TestFlight = Flight(rocket=Panthera, environment=Env, inclination=90, heading=0)
+    return -TestFlight.apogee
 
+
+res = optimize.minimize(apogee_fromvariedtankMass, 150)
+print(res.x)
 # import time
 # start = time.time()
-print(apogee_fromvariedtankMass(155))
+# print(apogee_fromvariedtankMass(155))
 # end = time.time()
 # print(f"Runtime of the program is {end-start}")

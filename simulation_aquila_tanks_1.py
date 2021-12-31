@@ -1,4 +1,6 @@
 from rocketpy import Environment, SolidMotor, Rocket, Flight
+import matplotlib.pyplot as plt
+import numpy as np
 # Setting up the environment
 Env = Environment(
     railLength=18,
@@ -27,18 +29,6 @@ WhiteGiant = SolidMotor(
     interpolationMethod = "linear"
 )
 
-
-N3400 = SolidMotor(
-    thrustSource= 3403.1, # used average Thrust
-    burnOut = 3.49,
-    grainNumber = 2,
-    grainDensity = 1950, # with APCP as solid propellant, density found at h35ttps://www.atsdr.cdc.gov/toxprofiles/tp162-c4.pdf
-    grainOuterRadius=0.065,
-    grainInitialInnerRadius=0,
-    grainInitialHeight= 0.31998 #using grain density, outer radius, and a propellant mass of 9kg from http://www.pro38.com/products/pro98/motor/MotorData.php?prodid=20146N5800-P
-    #Nozzle dimensions are assumed to be default
-)
-
 Panthera = Rocket(
     motor = WhiteGiant,
     radius = 0.3, # increase a bit off the tank radius
@@ -51,20 +41,7 @@ Panthera = Rocket(
     powerOnDrag = 0.5, 
 )
 
-Aquila = Rocket(
-    motor = N3400,
-    radius = 0.065,
-    mass = 26,
-    inertiaI = 6.60, # arbitrary number
-    inertiaZ = 0.0351, # arbitrary number
-    distanceRocketNozzle = -3.8, # arbitrary number
-    distanceRocketPropellant = -0.85704, # arbitraty number
-    powerOffDrag = 0.5, 
-    powerOnDrag = 0.5
-)
-
 Panthera.setRailButtons([0,18])
-Aquila.setRailButtons([0,0.20])
 
 #arbitrary aeros surfaces
 NoseCone = Panthera.addNose(length=0.40, kind="vonKarman", distanceToCM=3.8)
@@ -99,8 +76,41 @@ Tail = Panthera.addTail(topRadius=0.15 , bottomRadius =0.65 ,length=1, distanceT
 #                               lag=1.5,
 #                               noise=(0, 8.3, 0.5))
 
-TestFlight = Flight(rocket=Panthera, environment=Env, inclination=90, heading=0, maxTime = 30)
+TestFlight = Flight(rocket=Panthera, 
+environment=Env, 
+inclination=90, 
+heading=0, 
+maxTime = 30
+)
+
+N3400 = SolidMotor(
+    thrustSource= 3403.1, # used average Thrust
+    burnOut = 3.49,
+    grainNumber = 2,
+    grainDensity = 1950, # with APCP as solid propellant, density found at h35ttps://www.atsdr.cdc.gov/toxprofiles/tp162-c4.pdf
+    grainOuterRadius=0.065,
+    grainInitialInnerRadius=0,
+    grainInitialHeight= 0.31998 #using grain density, outer radius, and a propellant mass of 9kg from http://www.pro38.com/products/pro98/motor/MotorData.php?prodid=20146N5800-P
+    #Nozzle dimensions are assumed to be default
+)
+
+Aquila = Rocket(
+    motor = N3400,
+    radius = 0.065,
+    mass = 26,
+    inertiaI = 6.60, # arbitrary number
+    inertiaZ = 0.0351, # arbitrary number
+    distanceRocketNozzle = -3.8, # arbitrary number
+    distanceRocketPropellant = -0.85704, # arbitraty number
+    powerOffDrag = 0.5, 
+    powerOnDrag = 0.5
+)
+
+Aquila.setRailButtons([0,0.20])
+
 testSolution = TestFlight.solution[-1] #The initial solution for stage 2 is the final position and velocity data obtained from numerical integration in stage 1 simulation
+testSolution[0] = 0 #Flight has to start at t=0
+
 print(testSolution)
 
 # Env2 = Environment(
@@ -109,8 +119,6 @@ print(testSolution)
 #     longitude=-106.974998,
 #     elevation=1400 + TestFlight.apogee
 # )
-# TestFlight.plot3dTrajectory()
-# print(TestFlight.MachNumber)
 
 TestFlight2 = Flight(rocket=Aquila,
   initialSolution = testSolution,
@@ -121,12 +129,10 @@ TestFlight2 = Flight(rocket=Aquila,
 terminateOnApogee= True
 )
 
-# 10623.3429350963
-
-# print(TestFlight2.solution[-1])
-# TestFlight2.allInfo()
+TestFlight2.info()
 print(TestFlight2.apogee)
-# # rocket is flying sideways sadly
-# TestFlight2.plot3dTrajectory()
-# print(TestFlight2.solution)
-#print(TestFlight2.solution[-1])
+
+TestFlight2.plot3dTrajectory()
+
+
+

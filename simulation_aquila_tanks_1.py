@@ -66,8 +66,8 @@ Panthera = Rocket(
     inertiaZ = 0.0351, # arbitrary number
     distanceRocketNozzle = -3.8, # arbitrary number
     distanceRocketPropellant = -0.085704, # arbitrary number
-    powerOffDrag = 0.5, 
-    powerOnDrag = 0.5, 
+    powerOffDrag = 0.5,
+    powerOnDrag = 0.5,
 )
 
 #Adding rail buttons
@@ -81,10 +81,10 @@ FinSet = Panthera.addFins(4, span=0.325, rootChord=0.4, tipChord=0.2, distanceTo
 Tail = Panthera.addTail(topRadius=0.15 , bottomRadius =0.65 ,length=1, distanceToCM=-3.8)
 
 #Creating a flight object to simulate the flight of the first stage
-TestFlight = Flight(rocket=Panthera, 
-environment=Env, 
-inclination=90, 
-heading=0, 
+TestFlight = Flight(rocket=Panthera,
+environment=Env,
+inclination=90,
+heading=0,
 maxTime = t_burn
 )
 
@@ -98,7 +98,7 @@ N5800_grainlen = 1.12/6 # Estimate of individual grain length, m
 N5800_density = N5800_propmass/((np.power(N5800_graindia, 2)-np.power(N5800_portdia, 2))*N5800_grainlen*6*np.pi/4)
 
 N5800 = SolidMotor(
-    thrustSource = r"Panthera_Apogee_Simulator\Motors\Cesaroni_20146N5800-P.eng",
+    thrustSource = r"Motors\Cesaroni_20146N5800-P.eng",
     burnOut = 3.49,
     grainNumber = 6,
     grainSeparation=0.001,
@@ -118,7 +118,7 @@ Aquila = Rocket(
     inertiaZ = 0.3, # Estimate from OR
     distanceRocketNozzle = -0.4, # Estimate from RASAero
     distanceRocketPropellant = 0.15, # Estimate from RASAero
-    powerOffDrag = 0.5, 
+    powerOffDrag = 0.5,
     powerOnDrag = 0.5
 )
 
@@ -135,7 +135,7 @@ TestFlight2 = Flight(rocket=Aquila,
   initialSolution = pantheraSolution, #using the initial solution from the panthera stage
   environment= Env,
   inclination =90,
-  heading = 0, 
+  heading = 0,
 terminateOnApogee= True
 )
 

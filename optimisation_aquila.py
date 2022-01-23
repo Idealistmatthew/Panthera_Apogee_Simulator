@@ -77,7 +77,7 @@ def apogee_fromvariedtankMass(propellantmass,dragOn = dragOn, dragOff = dragOff 
     Panthera = Rocket(
         motor = WhiteGiant,
         radius = r_in, #Assume same as tank outer radius
-        mass = 120, #Using a total wet mass of launch, including aquila wet mass, of 270kg
+        mass = 65, #Using a total wet mass of launch, including aquila wet mass, of 270kg
         inertiaI = 6.60, # arbitrary number
         inertiaZ = 0.0351, # arbitrary number
         distanceRocketNozzle = -3.8, # arbitrary number

@@ -3,6 +3,7 @@
 from rocketpy import Environment, SolidMotor, Rocket, Flight
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 #Setting up the environment, including a default value of 9.8 for g
 
@@ -14,6 +15,8 @@ Env = Environment(
 )
 
 #Setting up parameters for White Giant liquid engine
+drag_data = np.genfromtxt(r"D:\Users\leezh\CUSF\Panthera_Apogee_Simulator\Drag_Data\CD_Test.csv", delimiter = ",")
+
 
 #Setting propellant mass and burn time parameters
 propellant_mass = 150 # Total mass of fuel and oxidiser, kg
@@ -41,7 +44,10 @@ tank_volume = propellant_mass/rho # Req'd internal volume, m^3
 tank_height = tank_volume/(np.pi*np.power(r_in, 2)) # Req'd tank height, m
 material_volume = np.pi*t_wall*((d_out*tank_height)+(2*np.power(r_out, 2))) # Req'd tank material volume, m^3
 tank_drymass = material_volume*rho_wall # Tank dry mass
+dragOff = drag_data[1:1000, [0,3]]
+dragOn = drag_data[1:1000,[0,4]]
 
+print(tank_height)
 #Creating a solidmotor object to represent the White Giant engine
 
 WhiteGiant = SolidMotor(
@@ -61,7 +67,7 @@ WhiteGiant = SolidMotor(
 Panthera = Rocket(
     motor = WhiteGiant,
     radius = r_in, #Assume same as tank outer radius
-    mass = 120, #Using a total wet mass of launch, including aquila wet mass, of 270kg
+    mass = 65, #Using a total wet mass of launch, including aquila wet mass, of 270kg
     inertiaI = 6.60, # arbitrary number
     inertiaZ = 0.0351, # arbitrary number
     distanceRocketNozzle = -3.8, # arbitrary number
@@ -98,7 +104,7 @@ N5800_grainlen = 1.12/6 # Estimate of individual grain length, m
 N5800_density = N5800_propmass/((np.power(N5800_graindia, 2)-np.power(N5800_portdia, 2))*N5800_grainlen*6*np.pi/4)
 
 N5800 = SolidMotor(
-    thrustSource = r"Motors\Cesaroni_20146N5800-P.eng",
+    thrustSource = r"D:\Users\leezh\CUSF\Panthera_Apogee_Simulator\Motors\Cesaroni_20146N5800-P.eng",
     burnOut = 3.49,
     grainNumber = 6,
     grainSeparation=0.001,

@@ -64,8 +64,8 @@ def apogee_fromvariedtankMass(propellantmass):
         inertiaZ = 0.0351, # arbitrary number
         distanceRocketNozzle = -3.8, # arbitrary number
         distanceRocketPropellant = -0.085704, # arbitraty number
-        powerOffDrag = 0.5, 
-        powerOnDrag = 0.5, 
+        powerOffDrag = 0.5,
+        powerOnDrag = 0.5,
     )
 
     Panthera.setRailButtons([0,18])
@@ -116,7 +116,8 @@ plt.xlabel("Propellant Mass (kg)")
 plt.ylabel("Apogee (m)")
 plt.show()
 
-
+#For the convenience of the tanks dimensions calculation
+apogee_to_mass_func=np.polyfit(mass, apogee_list, 2)
 
 
 

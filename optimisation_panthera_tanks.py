@@ -3,6 +3,7 @@ from rocketpy import Environment, SolidMotor, Rocket, Flight
 import numpy as np
 from scipy import optimize
 import matplotlib.pyplot as plt
+from Tanks_dimensions import tank_dimensions, fuel_oxidiser_mass_volume
 # Setting up the environment
 Env = Environment(
     railLength=18,
@@ -16,6 +17,32 @@ Env = Environment(
 # Env.setDate((tomorrow.year, tomorrow.month, tomorrow.day, 12))
 # Env.setAtmosphericModel(type='Forecast', file='GFS')
 # Env.info()
+
+tank_data = {
+    "fuel":{},
+    "oxidiser":{},
+    "material":{
+        'youngs':68e9,
+        'poissons':0.33,
+        'material_density':2700,
+        'yield_stress': 56e6,
+        'ultimate_stress':170e6,
+        #Pressure, max pressure=35 bar. Operating pressure=25 bar. In bar
+        'max_delta_p':20e5,
+    },
+    "other":{
+        'a':0.15,
+        'k':1,
+    },
+}
+
+material=tank_data['material']
+fuel = tank_data['fuel']
+oxidiser = tank_data['oxidiser']
+
+fuel_density = 841.9
+oxidiser_density = 970
+mixture_ratio = 0.9
 
 def apogee_fromvariedtankMass(propellantmass):
     """
@@ -31,6 +58,10 @@ def apogee_fromvariedtankMass(propellantmass):
     -------
 
     """
+
+    #Calculating propellant tank size and mass (estimate of tank drymass) based on propellant mass
+    (fuel_length, fuel_mass, oxidiser_length, oxidiser_mass) = fuel_oxidiser_mass_volume(propellantmass, fuel_density, oxidiser_density, mixture_ratio, fuel, oxidiser)
+
     ## some lines of code to calculate the grain height and other properties that change with propellant mass
     grainmass = propellantmass/2
     density = (3.5*975.2 + 788.75)/4.5
@@ -38,7 +69,22 @@ def apogee_fromvariedtankMass(propellantmass):
     grainradius = 0.15
     grainheight = float(grainvolume/(np.pi*(grainradius**2)))
     burnOuttime = float(propellantmass/150*30)
-    drymass = float(50 + 50*(propellantmass/150))
+
+    #Welding efficiency, 0.65-1.00
+    e=1; # In this case if it is the knuckle to crown, no weld than 1, if any weld than change it.
+
+    # k is tank ellipse ratio b/a, where b is y axis radius a is x-axis radius. k=1 when spherical
+    k=tank_data['other']['k'];#(k>=1)
+
+    safe_stress=material['yield_stress']/1.33; # Condition under personnel
+
+    if (material['ultimate_stress']/1.65<safe_stress):
+        safe_stress=material['ultimate_stress']/1.65
+
+    (fuel_cylindrical_tank_thickness, fuel_cylinder_mass, fuel_end_thickness, fuel_end_cap_mass, fuel_total_mass) = tank_dimensions(safe_stress, material['max_delta_p'], fuel, k, e)
+    (oxidiser_cylindrical_tank_thickness, oxidiser_cylinder_mass, oxidiser_end_thickness, oxidiser_end_cap_mass, oxidiser_total_mass) = tank_dimensions(safe_stress, material['max_delta_p'], oxidiser, k, e)
+
+    tank_drymass = oxidiser_cylinder_mass + oxidiser_end_cap_mass + fuel_cylinder_mass + fuel_end_cap_mass
 
     WhiteGiant = SolidMotor(
         thrustSource= 10000,
@@ -58,8 +104,8 @@ def apogee_fromvariedtankMass(propellantmass):
 
     Panthera = Rocket(
         motor = WhiteGiant,
-        radius = 0.3, # increase a bit off the tank radius
-        mass = drymass, # I included the wet mass of Aquila in this (meant to be total dry mass of rocket)
+        radius = grainradius, # increase a bit off the tank radius
+        mass = float(tank_drymass) + 78.05, # I included the wet mass of Aquila in this (meant to be total dry mass of rocket)
         inertiaI = 6.60, # arbitrary number
         inertiaZ = 0.0351, # arbitrary number
         distanceRocketNozzle = -3.8, # arbitrary number
@@ -104,12 +150,12 @@ def apogee_fromvariedtankMass(propellantmass):
     #                               noise=(0, 8.3, 0.5))
 
     TestFlight = Flight(rocket=Panthera, environment=Env, inclination=90, heading=0)
-    return -TestFlight.apogee
+    return TestFlight.apogee
 
-mass = np.linspace(60,200,num = 100)
+mass = np.linspace(60,1000, num = 100)
 apogee_list = []
 for i in mass:
-    apogee_list.append(-apogee_fromvariedtankMass(i))
+    apogee_list.append(apogee_fromvariedtankMass(i))
 
 plt.plot(mass, apogee_list)
 plt.xlabel("Propellant Mass (kg)")

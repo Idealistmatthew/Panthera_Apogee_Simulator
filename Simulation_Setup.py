@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from rocketpy import SolidMotor, Rocket
+from rocketpy import Environment, SolidMotor, Rocket, Flight
 
 file_path = "Mass_Data\Mass estimation master sheet.xlsx"
 # file_path_csv = "Mass_Data\Mass estimation master sheet - Simulator.csv"
@@ -38,6 +38,8 @@ COM_dist = mass_data["Component CoM position, m"][0]
 Nozzle_dist = float(mass_data["Component CoM position, m"][25] - COM_dist)
 propellant_dist = float(mass_data["Component CoM position, m"][16])    # used distance between nitrous tank COM and COM of Panthera+Aquila
 
+#Generating Aquila Data
+aquila_mass = float(mass_data["First-pass mass"][83])
 
 #change drag_data
 drag_data = np.genfromtxt(r"Drag_Data\CD_Test.csv", delimiter = ",")
@@ -46,6 +48,13 @@ dragOn = drag_data[1:1000,[0,4]]
 
 print(average_propellant_density)
 print(propellant_mass)
+
+Env = Environment(
+    railLength=18,
+    latitude=35.4,
+    longitude=-117.8,
+    elevation=621 #elevation above sea level, m
+)
 
 WhiteGiant = SolidMotor(
     thrustSource = thrust,
@@ -73,3 +82,75 @@ Panthera = Rocket(
 )
 
 Panthera.info()
+NoseCone = Panthera.addNose(length=0.40, kind="vonKarman", distanceToCM=3.8)
+
+FinSet = Panthera.addFins(4, span=0.325, rootChord=0.4, tipChord=0.2, distanceToCM=-1.400)
+
+Tail = Panthera.addTail(topRadius=0.15 , bottomRadius =0.65 ,length=1, distanceToCM=-3.8)
+Panthera.setRailButtons([0,18])
+
+#Creating a flight object to simulate the flight of the first stage
+TestFlight = Flight(rocket=Panthera,
+environment=Env,
+inclination=90,
+heading=0,
+maxTime = t_burn
+)
+
+# Pro98 data taken from Cesaroni, thrustcurve.org
+N5800_propmass = 9.021 # Total grain mass, kg
+N5800_portdia = 0.0254 # Estimate of port diameter from Pro98 technical drawings, m
+N5800_graindia = 0.090 # Estimate of grain outer diameter, m
+N5800_grainlen = 1.12/6 # Estimate of individual grain length, m
+N5800_density = N5800_propmass/((np.power(N5800_graindia, 2)-np.power(N5800_portdia, 2))*N5800_grainlen*6*np.pi/4)
+
+N5800 = SolidMotor(
+    thrustSource = r"Motors\Cesaroni_20146N5800-P.eng",
+    burnOut = 3.49,
+    grainNumber = 6,
+    grainSeparation=0.001,
+    grainOuterRadius = N5800_graindia/2,
+    grainDensity = N5800_density,
+    grainInitialInnerRadius = N5800_portdia/2,
+    grainInitialHeight = N5800_grainlen,
+    interpolationMethod="linear"
+)
+
+#Creating the aquila rocket model
+Aquila = Rocket(
+    motor = N5800,
+    radius = 0.12/2,
+    mass = aquila_mass - N5800_propmass,
+    inertiaI = 26.3, # Estimate from OR
+    inertiaZ = 0.3, # Estimate from OR
+    distanceRocketNozzle = -0.4, # Estimate from RASAero
+    distanceRocketPropellant = 0.15, # Estimate from RASAero
+    powerOffDrag = dragOff,
+    powerOnDrag = dragOn
+)
+
+Aquila.setRailButtons([-0.2, 0.6])
+Nose = Aquila.addNose(length=0.6, kind="vonKarman", distanceToCM=1.0)
+Fins = Aquila.addFins(4, span=0.12, rootChord=0.21, tipChord=0.13, distanceToCM=-0.3)
+
+pantheraSolution = TestFlight.solution[-1] #The initial solution for stage 2 is the final position and velocity data obtained from numerical integration in stage 1 simulation
+pantheraSolution[0] = 0 #Flight has to start at t=0
+
+TestFlight2 = Flight(rocket=Aquila,
+  initialSolution = pantheraSolution, #using the initial solution from the panthera stage
+  environment= Env,
+  inclination =90,
+  heading = 0,
+terminateOnApogee= True
+)
+
+panthera_burnout_velocity = pantheraSolution[6]
+panthera_burnout_altitude = pantheraSolution[3]
+aquila_apogee = TestFlight2.apogee
+
+print(f"Panthera Burnout Velocity: {panthera_burnout_velocity} m/s")
+print(f"Panthera Burnout Altitude: {panthera_burnout_altitude} m")
+print(f"Aquila Apogee: {aquila_apogee} m")
+
+#Displaying aquila trajectory
+TestFlight2.plot3dTrajectory()

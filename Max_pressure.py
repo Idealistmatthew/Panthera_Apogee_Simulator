@@ -10,8 +10,11 @@ fuel=data['fuel']
 oxidiser=data['oxidiser']
 material=data['material']
 other=data['other']
-def buckle(type, p_int, g=9.81, a=other['a'], k=other['k']):
-    area=np.pi*a**2
+a=other['a']
+area=np.pi*a**2
+
+def buckle(type, p_int, g=9.81, k=other['k']):
+
     youngs=material['youngs']
     end_thickness=type['end_thickness']
     material_mass=type['end_cap_mass']+type['cylinder_mass'];
@@ -21,8 +24,11 @@ def buckle(type, p_int, g=9.81, a=other['a'], k=other['k']):
 
     # buckling constat is within the range 0.05 to 0.10
     buckling_constant=0.10;
-    critical_pressure_cause_buckling=0.342*youngs*end_thickness**2/a**2;
-    critical_pressure_cause_buckling=(buckling_constant*2*youngs*end_thickness**2)/(a*k)**2;
+    if k==1:
+      critical_pressure_cause_buckling=0.342*youngs*end_thickness**2/a**2;
+    else:
+      critical_pressure_cause_buckling=(buckling_constant*2*youngs*end_thickness**2)/(a*k)**2;
+
 
     #Critical shear stress at atmospheric pressure
     stress_crit_atm=(9*(type['cylindrical_tank_thickness']/a)**1.6+0.16*(type['cylindrical_tank_thickness']/type['tank_length'])**1.3)*youngs
@@ -40,8 +46,19 @@ def buckle(type, p_int, g=9.81, a=other['a'], k=other['k']):
        print("%s%s%s" % ('Internal pressure required=',p_int_req, ' Pa'))
     else:
        print('No buckle')
+    return(critical_pressure_cause_buckling)
 
+def water_hammar(h, type, t=0, g=9.81, a=other['a']):
+   v=np.sqrt(2*g*h)
+   weight_flow_rate=type['density']*area*v
+   restrained_acoustic_c=type['acoustic_c']/(np.sqrt(1+(2.5*type['compressive_elasticity']*a*(1-material['poissons'])/(material['youngs']*type['cylindrical_tank_thickness']))))
+   pressure_surge=restrained_acoustic_c*weight_flow_rate/(area*g)
+   # Very crude estimate of the fuel height left
+   liq_height=(type['liq_volume']-type['flow_rate'])/area
+   time_delay=liq_height/restrained_acoustic_c
+   return pressure_surge, time_delay
 buckle(fuel, 1e5)
 buckle(oxidiser, -1000000000e5)
-
+print(water_hammar(1, fuel))
+# Please feel free to try out different buckling model
 

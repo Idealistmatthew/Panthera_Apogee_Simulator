@@ -118,7 +118,7 @@ plt.show()
 
 #For the convenience of the tanks dimensions calculation
 apogee_to_mass_func=np.polyfit(mass, apogee_list, 2)
-
+print(apogee_to_mass_func)
 
 
 # res = optimize.minimize(apogee_fromvariedtankMass, 150)

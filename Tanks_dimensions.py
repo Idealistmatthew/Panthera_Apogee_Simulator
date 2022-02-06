@@ -7,83 +7,34 @@ import numpy as np
 import matplotlib.pyplot as plt
 #Fuel Tank material is Al5051
 
-<<<<<<< HEAD
-dict = {
-    "fuel":{
-        "density":841.9,
-        'compressive_elasticity':1e6,# Undetermined, need to do experiment measurement itself
-        'flow_rate':0.001,
-        'acoustic_c':2000,# Undetermined
-    },
-    "oxidiser":{
-        "density":1001.2, # estimate from https://www.researchgate.net/figure/Thermodynamic-properties-of-liquid-nitrous-oxide-N2O_fig1_332489740
-        'compressive_elasticity':1e6,# Undetermined, need to do experiment measurement itself
-        'flow_rate':0.009,
-        'acoustic_c':2000,# Undetermined
-    },
-=======
-tank_data = {
-    "fuel":{},
-    "oxidiser":{},
->>>>>>> c88cef0ea0c102cb10e61cba24d1ef2f62ecbda1
-    "material":{
-        'youngs':68e9,
-        'poissons':0.33,
-        'material_density':2700,
-        'yield_stress': 56e6,
-        'ultimate_stress':170e6,
-        #Pressure, max pressure=35 bar. Operating pressure=25 bar. In bar
-        'max_delta_p':20e5,
-    },
-    "other":{
-        'a':0.15,
-        'k':1,
-    },
-}
-<<<<<<< HEAD
-material=dict['material']
-fuel=dict['fuel']
-oxidiser=dict['oxidiser']
-=======
+import json
+with open('tanks_specifications.json') as f:
+   tank_data = json.load(f)
+
 material=tank_data['material']
-fuel=tank_data['fuel']
-oxidiser=tank_data['oxidiser']
->>>>>>> c88cef0ea0c102cb10e61cba24d1ef2f62ecbda1
+fuel = tank_data['fuel']
+oxidiser = tank_data['oxidiser']
+other= tank_data['other']
 # def total_propellent_mass(apogee):
 #     from optimisation_panthera_tanks import apogee_to_mass_func
 #     apogee_to_mass_func[2]=apogee_to_mass_func[2]-apogee
 #     propellor_mass=np.roots(apogee_to_mass_func)
 #     total_mass=propellor_mass[1]
-<<<<<<< HEAD
-#     expulsion_efficiency=0.97
-#     total_mass=total_mass/expulsion_efficiency
-#     return total_mass
-def total_propellent_mass(apogee):
-    # apogee_to_mass_func=[3.63785875e-01,1.97877764e+01,4.10204164e+03]
-    apogee_to_mass_func=[3.92368513e-02, 6.00200261e+01, 1.47627269e+03]
-    apogee_to_mass_func[2]=apogee_to_mass_func[2]-apogee
-    propellor_mass=np.roots(apogee_to_mass_func)
-    total_mass=propellor_mass[1]
-    expulsion_efficiency=0.97
-    total_mass=total_mass/expulsion_efficiency
-    return total_mass
-
-def fuel_oxidiser_mass_volume(total_mass,fuel_density,oxidiser_density,mixture_ratio,fuel_coef=1, oxidiser_coef=9,a=15e-2,g=9.81,ullage=1.05, mol_mass_fuel=60e-3, mol_mass_oxidiser=44e-3, realistic=0):
-=======
 #     return total_mass
 
-def fuel_oxidiser_mass_volume(total_mass,fuel_density,oxidiser_density,mixture_ratio, fuel, oxidiser, fuel_coef=1, oxidiser_coef=9,a=15e-2,g=9.81,ullage=1.1, mol_mass_fuel=60e-3, mol_mass_oxidiser=44e-3):
->>>>>>> c88cef0ea0c102cb10e61cba24d1ef2f62ecbda1
+def fuel_oxidiser_mass_volume(propellant_mass,fuel_density,oxidiser_density,mixture_ratio, fuel, oxidiser, fuel_coef=1, oxidiser_coef=9,a=15e-2,g=9.81,ullage=1.1, mol_mass_fuel=60e-3, mol_mass_oxidiser=44e-3):
     # assume the propellent mass is entirely dependent on coefficient
+    expulsion_efficiency=0.97
+    propellant_mass=propellant_mass/expulsion_efficiency
     if(mixture_ratio<1):
         # if propellent mass already include mixture_ratio
-        # fuel_mass=total_mass*(fuel_coef*mol_mass_fuel)/(oxidiser_coef/mixture_ratio*mol_mass_oxidiser+fuel_coef*mol_mass_fuel)
-        # oxidiser_mass=total_mass*(oxidiser_coef/mixture_ratio*mol_mass_oxidiser)/(oxidiser_coef/mixture_ratio*mol_mass_oxidiser+fuel_coef*mol_mass_fuel)
-        fuel_mass=total_mass*(fuel_coef*mol_mass_fuel)/(oxidiser_coef*mol_mass_oxidiser+fuel_coef*mol_mass_fuel)
-        oxidiser_mass=(total_mass*(oxidiser_coef*mol_mass_oxidiser)/(oxidiser_coef*mol_mass_oxidiser+fuel_coef*mol_mass_fuel))/mixture_ratio
+        # fuel_mass=propellant_mass*(fuel_coef*mol_mass_fuel)/(oxidiser_coef/mixture_ratio*mol_mass_oxidiser+fuel_coef*mol_mass_fuel)
+        # oxidiser_mass=propellant_mass*(oxidiser_coef/mixture_ratio*mol_mass_oxidiser)/(oxidiser_coef/mixture_ratio*mol_mass_oxidiser+fuel_coef*mol_mass_fuel)
+        fuel_mass=propellant_mass*(fuel_coef*mol_mass_fuel)/(oxidiser_coef*mol_mass_oxidiser+fuel_coef*mol_mass_fuel)
+        oxidiser_mass=(propellant_mass*(oxidiser_coef*mol_mass_oxidiser)/(oxidiser_coef*mol_mass_oxidiser+fuel_coef*mol_mass_fuel))/mixture_ratio
     else:
-        fuel_mass=total_mass*(fuel_coef*mol_mass_fuel)/(oxidiser_coef*mol_mass_oxidiser+fuel_coef*mol_mass_fuel)*mixture_ratio
-        oxidiser_mass=total_mass*(oxidiser_coef*mol_mass_oxidiser)/(oxidiser_coef*mol_mass_oxidiser+fuel_coef*mol_mass_fuel)
+        fuel_mass=propellant_mass*(fuel_coef*mol_mass_fuel)/(oxidiser_coef*mol_mass_oxidiser+fuel_coef*mol_mass_fuel)*mixture_ratio
+        oxidiser_mass=propellant_mass*(oxidiser_coef*mol_mass_oxidiser)/(oxidiser_coef*mol_mass_oxidiser+fuel_coef*mol_mass_fuel)
 
     fuel_volume=fuel_mass/fuel_density
     actual_fuel_volume=fuel_volume*ullage
@@ -97,12 +48,8 @@ def fuel_oxidiser_mass_volume(total_mass,fuel_density,oxidiser_density,mixture_r
     fuel['liq_mass']=fuel_mass
     oxidiser['tank_length']=oxidiser_length
     oxidiser['liq_mass']=oxidiser_mass
-<<<<<<< HEAD
-    oxidiser['liq_volume']=oxidiser_volume
-=======
 
     return (fuel_length, fuel_mass, oxidiser_length, oxidiser_mass)
->>>>>>> c88cef0ea0c102cb10e61cba24d1ef2f62ecbda1
 
 
 def tank_dimensions(safe_stress, max_delta_p, type, k, e, a=15e-2, g=9.81):
@@ -142,71 +89,47 @@ def tank_dimensions(safe_stress, max_delta_p, type, k, e, a=15e-2, g=9.81):
     type['end_cap_mass']=end_cap_mass
     type['dry_mass']=material_mass
     type['total_mass']=total_mass
-<<<<<<< HEAD
-    type['end_cap_volume']=end_cap_volume
-    type['total_material_volume']=cylinder_volume+end_cap_volume
-    type['total_tank_volume']=type['liq_volume']+cylinder_volume+end_cap_volume
-a=dict['other']['a']
-=======
-
     return (cylindrical_tank_thickness, cylinder_mass, end_thickness, end_cap_mass, total_mass)
 
-a=tank_data['other']['a']
->>>>>>> c88cef0ea0c102cb10e61cba24d1ef2f62ecbda1
+a=other['a']
+k=other['k']
 area=np.pi*a**2
 #estimate fuel mass required from the apogee
 apogee=140000
-# We have to test out fuel oxidiser ratio
-mixture_ratio=0.9 # estimate, ratio in moles
+
 # Reaction: C2H7OH + 9N2O -> 9N2 + 3CO2 + 4H2O
 
-<<<<<<< HEAD
-total_mass=total_propellent_mass(apogee)
-fuel_oxidiser_mass_volume(total_mass,fuel['density'],oxidiser['density'],mixture_ratio)
-=======
-total_mass=150
-fuel_oxidiser_mass_volume(total_mass,fuel_density,oxidiser_density,mixture_ratio, fuel, oxidiser)
->>>>>>> c88cef0ea0c102cb10e61cba24d1ef2f62ecbda1
+# total_mass=150
+# fuel_oxidiser_mass_volume(total_mass,fuel['density'],oxidiser['density'],other['mixture_ratio'], fuel, oxidiser)
 
-#Welding efficiency, 0.65-1.00
-e=1; # In this case if it is the knuckle to crown, no weld than 1, if any weld than change it.
+# #Welding efficiency, 0.65-1.00
+# e=1; # In this case if it is the knuckle to crown, no weld than 1, if any weld than change it.
 
-# k is tank ellipse ratio b/a, where b is y axis radius a is x-axis radius. k=1 when spherical
-k=tank_data['other']['k'];#(k>=1)
+# # k is tank ellipse ratio b/a, where b is y axis radius a is x-axis radius. k=1 when spherical
+# k=tank_data['other']['k'];#(k>=1)
 
-safe_stress=material['yield_stress']/1.33; # Condition under personnel
+# safe_stress=material['yield_stress']/1.33; # Condition under personnel
 
-if (material['ultimate_stress']/1.65<safe_stress):
-    safe_stress=material['ultimate_stress']/1.65
-tank_dimensions(safe_stress, material['max_delta_p'], fuel, k, e)
-tank_dimensions(safe_stress, material['max_delta_p'], oxidiser, k, e)
+# if (material['ultimate_stress']/1.65<safe_stress):
+#     safe_stress=material['ultimate_stress']/1.65
+# tank_dimensions(safe_stress, material['max_delta_p'], fuel, k, e)
+# tank_dimensions(safe_stress, material['max_delta_p'], oxidiser, k, e)
 # print('fuel')
 # for x in fuel:
 #     print(x,':',fuel[x])
 # print('\noxidiser')
 # for x in oxidiser:
 #     print(x,':',oxidiser[x])
-
-dry_mass=fuel['dry_mass']+oxidiser['dry_mass']
-print("Total dry mass=%s" % (dry_mass))
-import json
-
-with open('tanks_specifications.json', 'w')as fp:
-<<<<<<< HEAD
-    json.dump(dict, fp)
-base_height=2
-Total_height=fuel['tank_length']+oxidiser['tank_length']+2*a*k+base_height
-print(Total_height)
-print('Top fuel bottom oxidiser')
-c_o_m_1=((fuel['liq_mass']+fuel['cylinder_mass'])*(fuel['tank_length']/2+oxidiser['tank_length']+a*k)+fuel['end_cap_mass']*(a*k/6+fuel['tank_length']+oxidiser['tank_length']+a*k)+(oxidiser['liq_mass']+oxidiser['cylinder_mass'])*(oxidiser['tank_length']/2+a*k)+oxidiser['end_cap_mass']*(oxidiser['tank_length']+oxidiser['tank_length']+a*k/6))/(fuel['total_mass']+oxidiser['total_mass'])+base_height
-print("COM is %s" % (c_o_m_1))
-print('Top oxidiser bottom fuel')
-c_o_m_2=((oxidiser['liq_mass']+oxidiser['cylinder_mass'])*(oxidiser['tank_length']/2+fuel['tank_length']+a*k)+oxidiser['end_cap_mass']*(a*k/6+oxidiser['tank_length']+fuel['tank_length']+a*k)+(fuel['liq_mass']+fuel['cylinder_mass'])*(fuel['tank_length']/2+a*k)+fuel['end_cap_mass']*(fuel['tank_length']+fuel['tank_length']+a*k/6))/(oxidiser['total_mass']+fuel['total_mass'])+base_height
-print("COM is %s" % (c_o_m_2))
-=======
-    json.dump(tank_data, fp)
->>>>>>> c88cef0ea0c102cb10e61cba24d1ef2f62ecbda1
-
+def COM():
+    base_height=2
+    Total_height=fuel['tank_length']+oxidiser['tank_length']+2*a*k+base_height
+    print("Total length is %s" % (Total_height))
+    print('Top fuel bottom oxidiser')
+    c_o_m_1=((fuel['liq_mass']+fuel['cylinder_mass'])*(fuel['tank_length']/2+oxidiser['tank_length']+a*k)+fuel['end_cap_mass']*(a*k/6+fuel['tank_length']+oxidiser['tank_length']+a*k)+(oxidiser['liq_mass']+oxidiser['cylinder_mass'])*(oxidiser['tank_length']/2+a*k)+oxidiser['end_cap_mass']*(oxidiser['tank_length']+oxidiser['tank_length']+a*k/6))/(fuel['total_mass']+oxidiser['total_mass'])+base_height
+    print("COM is %s" % (c_o_m_1))
+    print('Top oxidiser bottom fuel')
+    c_o_m_2=((oxidiser['liq_mass']+oxidiser['cylinder_mass'])*(oxidiser['tank_length']/2+fuel['tank_length']+a*k)+oxidiser['end_cap_mass']*(a*k/6+oxidiser['tank_length']+fuel['tank_length']+a*k)+(fuel['liq_mass']+fuel['cylinder_mass'])*(fuel['tank_length']/2+a*k)+fuel['end_cap_mass']*(fuel['tank_length']+fuel['tank_length']+a*k/6))/(oxidiser['total_mass']+fuel['total_mass'])+base_height
+    print("COM is %s" % (c_o_m_2))
 # fuel_total_mass=[]
 # fuel_total_volume=[]
 # max_pressure=[]

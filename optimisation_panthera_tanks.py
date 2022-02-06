@@ -1,9 +1,10 @@
+from tracemalloc import stop
 from numpy.core.function_base import linspace
 from rocketpy import Environment, SolidMotor, Rocket, Flight
 import numpy as np
 from scipy import optimize
 import matplotlib.pyplot as plt
-from Tanks_dimensions import tank_dimensions, fuel_oxidiser_mass_volume
+from Tanks_dimensions import tank_dimensions, fuel_oxidiser_mass_volume, COM
 # Setting up the environment
 Env = Environment(
     railLength=18,
@@ -18,9 +19,20 @@ Env = Environment(
 # Env.setAtmosphericModel(type='Forecast', file='GFS')
 # Env.info()
 
+
 tank_data = {
-    "fuel":{},
-    "oxidiser":{},
+    "fuel":{
+        "density":841.9,
+        'compressive_elasticity':1e6,# Undetermined, need to do experiment measurement itself
+        'flow_rate':0.001,
+        'acoustic_c':2000,# Undetermined
+    },
+    "oxidiser":{
+        "density":1001.2, # estimate from https://www.researchgate.net/figure/Thermodynamic-properties-of-liquid-nitrous-oxide-N2O_fig1_332489740
+        'compressive_elasticity':1e6,# Undetermined, need to do experiment measurement itself
+        'flow_rate':0.009,
+        'acoustic_c':2000,# Undetermined
+    },
     "material":{
         'youngs':68e9,
         'poissons':0.33,
@@ -33,6 +45,9 @@ tank_data = {
     "other":{
         'a':0.15,
         'k':1,
+    # We have to test out fuel oxidiser ratio
+        'mixture_ratio':0.9, # estimate, ratio in moles
+
     },
 }
 
@@ -40,9 +55,12 @@ material=tank_data['material']
 fuel = tank_data['fuel']
 oxidiser = tank_data['oxidiser']
 
-fuel_density = 841.9
-oxidiser_density = 970
+fuel_density = fuel['density']
+oxidiser_density = oxidiser['density']
 mixture_ratio = 0.9
+a=tank_data['other']['a']
+k=tank_data['other']['k']
+
 
 def apogee_fromvariedtankMass(propellantmass):
     """
@@ -81,6 +99,7 @@ def apogee_fromvariedtankMass(propellantmass):
     if (material['ultimate_stress']/1.65<safe_stress):
         safe_stress=material['ultimate_stress']/1.65
 
+
     (fuel_cylindrical_tank_thickness, fuel_cylinder_mass, fuel_end_thickness, fuel_end_cap_mass, fuel_total_mass) = tank_dimensions(safe_stress, material['max_delta_p'], fuel, k, e)
     (oxidiser_cylindrical_tank_thickness, oxidiser_cylinder_mass, oxidiser_end_thickness, oxidiser_end_cap_mass, oxidiser_total_mass) = tank_dimensions(safe_stress, material['max_delta_p'], oxidiser, k, e)
 
@@ -118,9 +137,7 @@ def apogee_fromvariedtankMass(propellantmass):
 
     #arbitrary aeros surfaces
     NoseCone = Panthera.addNose(length=0.40, kind="vonKarman", distanceToCM=3.8)
-
     FinSet = Panthera.addFins(4, span=0.325, rootChord=0.4, tipChord=0.2, distanceToCM=-1.400)
-
     Tail = Panthera.addTail(topRadius=0.15 , bottomRadius =0.65 ,length=1, distanceToCM=-3.8)
 
     # def drogueTrigger(p, y):
@@ -154,19 +171,33 @@ def apogee_fromvariedtankMass(propellantmass):
 
 mass = np.linspace(60,1000, num = 100)
 apogee_list = []
-for i in mass:
-    apogee_list.append(apogee_fromvariedtankMass(i))
-
+required_height=140000
+optimal_mass=0
+for x in mass:
+    apogee=apogee_fromvariedtankMass(x)
+    if optimal_mass==0:
+        if apogee>required_height:
+            optimal_mass=x
+    apogee_list.append(apogee)
 plt.plot(mass, apogee_list)
 plt.xlabel("Propellant Mass (kg)")
 plt.ylabel("Apogee (m)")
+
+max_apogee = max(apogee_list)  # Find the maximum y value
+if optimal_mass==0:
+    optimal_mass=mass[apogee_list.index(max_apogee)]
+apogee_fromvariedtankMass(optimal_mass)
+actual_propellant_mass=fuel['liq_mass']+oxidiser['liq_mass']
+total_mass=fuel['total_mass']+oxidiser['total_mass']
+print('Optimized propellant mass is %s, with a total mass of %s, max height is %s' % (actual_propellant_mass, total_mass, max_apogee))
+
+COM()
+
+import json
+with open('tanks_specifications.json', 'w')as fp:
+    json.dump(tank_data, fp)
+
 plt.show()
-
-#For the convenience of the tanks dimensions calculation
-apogee_to_mass_func=np.polyfit(mass, apogee_list, 2)
-print(apogee_to_mass_func)
-
-
 # res = optimize.minimize(apogee_fromvariedtankMass, 150)
 # print(res.x)
 # import time

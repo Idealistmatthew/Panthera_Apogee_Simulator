@@ -2,10 +2,10 @@ import pandas as pd
 import numpy as np
 from rocketpy import SolidMotor, Rocket
 
-# file_path = "Mass_Data\Mass estimation master sheet.xlsx"
-file_path_csv = "Mass_Data\Mass estimation master sheet - Simulator.csv"
+file_path = "Mass_Data\Mass estimation master sheet.xlsx"
+# file_path_csv = "Mass_Data\Mass estimation master sheet - Simulator.csv"
 
-# mass_data = pd.read_excel(file_path,"Simulator")
+mass_data = pd.read_excel(file_path,"Simulator")
 
 # mass_data = pd.read_csv(file_path_csv)
 mass_data = mass_data.rename(columns={"Unnamed: 2": "Value"})

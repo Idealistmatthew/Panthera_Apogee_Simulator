@@ -84,7 +84,7 @@ Panthera = Rocket(
 Panthera.info()
 NoseCone = Panthera.addNose(length=0.40, kind="vonKarman", distanceToCM=3.8)
 
-FinSet = Panthera.addFins(4, span=0.325, rootChord=0.4, tipChord=0.2, distanceToCM=-1.400)
+FinSet = Panthera.addFins(4, span=0.325, rootChosrd=0.4, tipChord=0.2, distanceToCM=-1.400)
 
 Tail = Panthera.addTail(topRadius=0.15 , bottomRadius =0.65 ,length=1, distanceToCM=-3.8)
 Panthera.setRailButtons([0,18])
@@ -153,4 +153,6 @@ print(f"Panthera Burnout Altitude: {panthera_burnout_altitude} m")
 print(f"Aquila Apogee: {aquila_apogee} m")
 
 #Displaying aquila trajectory
+# print(TestFlight.solution)
+# TestFlight.plot3dTrajectory()
 TestFlight2.plot3dTrajectory()

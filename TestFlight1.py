@@ -14,6 +14,11 @@ mass_data = mass_data.rename(columns={"Unnamed: 2": "Value"})
 
 print(mass_data)
 
+#import airfoil coefficient of lift vs angle of attack data
+airfoil_file_path = r"Airfoil\xf-n2414-il-50000.csv"
+airfoil_data = pd.read_csv(airfoil_file_path)
+
+
 
 # Generating White Giant Data
 thrust = mass_data["Value"][2]
@@ -84,7 +89,7 @@ Panthera = Rocket(
 Panthera.info()
 NoseCone = Panthera.addNose(length=0.40, kind="vonKarman", distanceToCM=3.8)
 
-FinSet = Panthera.addFins(4, span=0.75, rootChord=1.2, tipChord=0.6, distanceToCM=-0.60)
+FinSet = Panthera.addFins(4, span=0.75, rootChord=1.2, tipChord=0.6, distanceToCM=-0.60, airfoil=(airfoil_file_path,"degrees"))
 
 Tail = Panthera.addTail(topRadius=0.15 , bottomRadius =0.65 ,length=1, distanceToCM=-3.8)
 Panthera.setRailButtons([0,18])
@@ -255,4 +260,4 @@ def calculateFinFlutterAnalysis(Flight, finThickness, shearModulus):
 
         return None
 
-calculateFinFlutterAnalysis(TestFlight, 0.8e-2, 2.4e10)   
+calculateFinFlutterAnalysis(TestFlight, 0.0105, 2.4e10)   

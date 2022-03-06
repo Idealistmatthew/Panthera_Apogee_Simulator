@@ -86,12 +86,12 @@ Panthera = Rocket(
     powerOnDrag = dragOn,
 )
 
-Panthera.info()
-NoseCone = Panthera.addNose(length=0.40, kind="vonKarman", distanceToCM=3.8)
+#Panthera.info()
+NoseCone = Panthera.addNose(length=0.40, kind="vonKarman", distanceToCM=7.94)
 
-FinSet = Panthera.addFins(4, span=0.75, rootChord=1.2, tipChord=0.6, distanceToCM=-0.60, airfoil=(airfoil_file_path,"degrees"))
+FinSet = Panthera.addFins(4, span=0.75, rootChord=1.2, tipChord=0.6, distanceToCM=-0.76, airfoil=(airfoil_file_path,"degrees"))
 
-Tail = Panthera.addTail(topRadius=0.15 , bottomRadius =0.65 ,length=1, distanceToCM=-3.8)
+Tail = Panthera.addTail(topRadius=0.13 , bottomRadius =0.30 ,length=0.5, distanceToCM=5.04)
 Panthera.setRailButtons([0,18])
 
 #Creating a flight object to simulate the flight of the first stage
@@ -260,4 +260,4 @@ def calculateFinFlutterAnalysis(Flight, finThickness, shearModulus):
 
         return None
 
-calculateFinFlutterAnalysis(TestFlight, 0.0105, 2.4e10)   
+calculateFinFlutterAnalysis(TestFlight, 0.01, 2.4e10)   
